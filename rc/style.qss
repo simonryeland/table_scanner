@@ -1,0 +1,85 @@
+QMainWindow {
+    background-color: #282c2d;
+}
+
+QTableWidget {
+    background-color: #1e2226;
+    color: white;
+    gridline-color: #333a41;
+    selection-background-color: #3d5afe; /* Цвет выделения (синий) */
+    selection-color: white;
+    outline: none; /* Убирает пунктирную рамку вокруг ячейки */
+}
+
+/* Базовый стиль ячейки (прозрачный, чтобы видеть фон таблицы) */
+QTableWidget::item {
+    padding: 5px;
+}
+
+/* Стиль для ячеек с ошибкой (кастомное свойство) */
+QTableWidget::item[error="true"] {
+    background-color: #5c2121; /* темно-красный HEX */
+    color: white;
+}
+
+/* Выделенная ячейка (всегда приоритет синего) */
+QTableWidget::item:selected {
+    background-color: #3d5afe;
+    color: white;
+}
+
+QHeaderView::section {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 4px;
+    border: 1px solid #333a41;
+    font-weight: bold;
+}
+
+/* обычная */
+QPushButton {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #606162, stop:1 #2f2f2f);
+    color: white;
+    border: 1px solid #767676;
+    border-radius: 5px;
+    padding: 5px 15px; /* Сразу задаем отступы здесь */
+    min-height: 5px;
+}
+
+/* наведение */
+QPushButton:hover {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #b1b2b5, stop:1 #7d7d7f);
+    color: black;
+    border: 1px solid #cfd0d3;
+}
+
+/* нажата */
+QPushButton:pressed {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #eff0f4, stop:1 #b2b3b6);
+    border: 1px solid #ffffff;
+}
+
+/* выключена */
+QPushButton:disabled {
+    background-color: #4a4a4a;
+    color: #7f8c8d;
+    border: 1px solid #333333;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background: #282c2d;
+    width: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: #606162;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
