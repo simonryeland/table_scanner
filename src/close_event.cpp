@@ -1,10 +1,8 @@
 // src/close_event.cpp
 
 #include "mainwindow.h"
-#include <QCloseEvent>
 
-void MainWindow::closeEvent (QCloseEvent *event)
-{
-//    loadSettings ();
+void MainWindow::closeEvent (QCloseEvent *event) {
+    saveSettings ();
     event->accept ();
 }

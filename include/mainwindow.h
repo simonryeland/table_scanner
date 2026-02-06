@@ -8,6 +8,8 @@
 #include <QTableWidget>
 #include <QCheckBox>
 #include <QProgressBar>
+#include <QCloseEvent> 
+#include <QString>
 #include "types.h"
 #include "recognizer.h"
 
@@ -20,16 +22,15 @@ public:
 
 private slots:
     void calculateSum ();           // математические действия
-    void selectOutputFolder ();     // Слот для выбора папки
-    void saveToCSV ();              // метод для сохранения
+    void selectOutputFolder ();     // для выбора папки
+    void saveToCSV ();              // для сохранения
     void handleStartProcessing ();  // Запуск OCR и OpenCV
     void acquireFromScanner ();     // Для коннекта к сканеру
     void deleteCellAndShiftLeft ();
-    
     void showHelp ();
 
 protected:
-    void closeEvent (QCloseEvent *event);
+    void closeEvent (QCloseEvent *event) override;
 
 private:
     int w = 1111;
@@ -39,13 +40,20 @@ private:
     TableRecognizer recognizer;
     QString outputFolderPath;
 
-    void setupUI ();                             // Метод для ручной сборки интерфейса
+    void setupUI ();                             // для ручной сборки интерфейса
     void processImageFile (const QString &path); // Вспомогательный метод
-    void cleanTempImages ();                     // Метод для очищенния tmp/
+    void cleanTempImages ();                     // для очищения tmp/
     void cleanSelectedCells ();
     void checkSystemDependencies ();
-    double cleanAndParse (QString text);
+    void loadSettings ();
+    void saveSettings ();
 
+    // Утилиты для работы с текстом
+    double cleanAndParse (QString text);
+    QString sanitizeFilename (QString name);
+    bool containsCyrillic (const QString &str);
+
+    // Указатели на виджеты
     QWidget *centralWidget;
     QTableWidget *dataTable;
     QPushButton *helpButton;

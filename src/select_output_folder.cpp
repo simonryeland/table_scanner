@@ -1,19 +1,29 @@
 // src/select_output_folder.cpp
 
 #include "mainwindow.h"
-#include <QDir>
 #include <QFileDialog>
-#include <QFileInfo>
+#include <QMessageBox>
 
 void MainWindow::selectOutputFolder () {
-    // Используем статический метод для выбора директории
-    outputFolderPath = QFileDialog::getExistingDirectory (this,
-        "Выберите папку для сохранения результатов",
-        QDir::homePath (),
-        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory (this, "Выберите папку", outputFolderPath);
+    
+    if (!dir.isEmpty ()) {
+        // Проверка на наличие не-ASCII символов (кириллицы)
+        bool hasNonAscii = false;
+        for (const QChar &c : dir) {
+            if (c.unicode () > 127) {
+                hasNonAscii = true;
+                break;
+            }
+        }
 
-    if (!outputFolderPath.isEmpty ()) {
-        qDebug () << "Выбрана папка:" << outputFolderPath;
-        selectFolderButton->setText ("Папка: " + QFileInfo(outputFolderPath).baseName ());
+        if (hasNonAscii) {
+            QMessageBox::warning (this, "Внимание", 
+                "Путь содержит кириллицу. Это может привести к ошибкам при сохранении файлов.\n"
+                "Рекомендуется использовать пути только на латинице.");
+        }
+        
+        outputFolderPath = dir;
+        saveSettings (); // Сразу сохраняем "плохой" или "хороший" путь
     }
 }

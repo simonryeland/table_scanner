@@ -33,7 +33,10 @@ SOURCES += src/main.cpp \
            src/delete_cell_and_shift_left.cpp \
            src/clean_selected_cells.cpp \
            src/close_event.cpp \
-           src/help.cpp
+           src/help.cpp \
+           src/settings.cpp \
+           src/sanitize_filename.cpp \
+           src/contains_cyrillic.cpp
 
 RESOURCES += rc/resources.qrc
 

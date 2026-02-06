@@ -2,38 +2,61 @@
 
 #include "mainwindow.h"
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QFile>
 
 void MainWindow::saveToCSV () {
-    // Запрашиваем имя файла у пользователя
-    QString fileName = QFileDialog::getSaveFileName (this,
-        "Сохранить таблицу", "", "CSV Files (*.csv);;All Files (*)");
+    // Используем последнюю удачную папку из настроек
+    QString initialPath = outputFolderPath + "/result.csv";
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+        "Сохранить таблицу", initialPath, "CSV Files (*.csv)");
 
     if (fileName.isEmpty ()) return;
 
-    // Добавляем расширение, если пользователь его не указал
+    // ФИЛЬТРАЦИЯ: Проверяем путь на кириллицу перед сохранением
+    if (containsCyrillic (fileName)) {
+        QMessageBox::StandardButton res = QMessageBox::warning(this, "Опасный путь", 
+            "В пути или имени файла обнаружена кириллица. Это может вызвать проблемы в Excel.\n"
+            "Продолжить всё равно?", QMessageBox::Yes | QMessageBox::No);
+        if (res == QMessageBox::No) return;
+    }
+
     if (!fileName.endsWith (".csv")) fileName += ".csv";
 
     QFile file (fileName);
     if (file.open (QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out (&file);
-        // Устанавливаем кодировку UTF-8 для корректного отображения кириллицы
+        
+        // BOM (Byte Order Mark) — КРИТИЧНО для Excel
+        // Без этого Excel может открыть файл "кракозябрами", даже если там UTF-8
+        out.setGenerateByteOrderMark (true);
         out.setEncoding (QStringConverter::Utf8);
+
+        // Записываем разделитель специально для Excel (чтобы он сразу разбил по столбцам)
+        out << "sep=;\n"; 
 
         for (int r = 0; r < dataTable->rowCount (); ++r) {
             QStringList rowData;
             for (int c = 0; c < dataTable->columnCount (); ++c) {
                 QTableWidgetItem *item = dataTable->item (r, c);
-                // Если ячейка пустая, пишем пустую строку
-                rowData << (item ? item->text () : "");
+                QString text = item ? item->text () : "";
+                
+                // Экранируем кавычки и точки с запятой, если они есть в тексте
+                if (text.contains (";") || text.contains ("\"")) {
+                    text = "\"" + text.replace ("\"", "\"\"") + "\"";
+                }
+                rowData << text;
             }
-            // Объединяем ячейки через ";" и пишем в файл
             out << rowData.join (";") << "\n";
         }
 
         file.close ();
-        qDebug () << "Файл успешно сохранен:" << fileName;
-    } else {
-        qCritical () << "Не удалось открыть файл для записи";
+        
+        // Обновляем путь для следующего раза
+        outputFolderPath = QFileInfo (fileName).absolutePath ();
+        saveSettings ();
+        
+        qDebug () << "Файл сохранен (BOM UTF-8):" << fileName;
     }
 }

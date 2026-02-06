@@ -10,6 +10,11 @@
 #include <QHBoxLayout>
 
 void MainWindow::setupUI () {
+    setWindowTitle ("Scanner Tables");
+    setWindowIcon (QIcon (":/icons/app_icon.png"));
+    setMinimumSize (800, 240);
+    resize (w, h);
+
     centralWidget = new QWidget (this);
     setCentralWidget (centralWidget);
     auto *mainLayout = new QVBoxLayout (centralWidget);
