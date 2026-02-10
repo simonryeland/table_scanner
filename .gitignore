@@ -82,5 +82,5 @@ CMakeLists.txt.user*
 
 /build*/
 tmp/
-.qtc*
+.qtc*/
 tabscan

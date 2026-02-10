@@ -14,7 +14,7 @@ make
 ## clear:
 
 ```bash
-make clean; rm -r build_tmp/ tmp/* tabscan Makefile .qmake.stash
+make clean; rm -r build_tmp/ tmp/* tabscan Makefile .qmake.stash .qtc*/
 ```
 
 <!--
